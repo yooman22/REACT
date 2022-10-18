@@ -1,0 +1,48 @@
+{
+  "name": "next-study",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint --ext .ts,.tsx .",
+    "re-install": "rm -rf .next .swc _static node_modules && npm install"
+  },
+  "dependencies": {
+    "@emotion/react": "^11.10.4",
+    "@emotion/styled": "^11.10.4",
+    "@hookform/resolvers": "^2.9.8",
+    "@iconify/iconify": "^3.0.0",
+    "@mui/lab": "^5.0.0-alpha.102",
+    "@mui/material": "^5.10.8",
+    "@reduxjs/toolkit": "^1.8.5",
+    "axios": "^0.27.2",
+    "framer-motion": "^7.5.3",
+    "jwt-decode": "^3.1.2",
+    "next": "12.2.5",
+    "prettier": "^2.7.1",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "react-hook-form": "^7.37.0",
+    "react-redux": "^8.0.2",
+    "redux-persist": "^6.0.0",
+    "yup": "^0.32.11"
+  },
+  "devDependencies": {
+    "@iconify/react": "^4.0.0",
+    "@types/node": "18.7.13",
+    "@types/react": "18.0.17",
+    "@types/react-dom": "18.0.6",
+    "@typescript-eslint/eslint-plugin": "^5.35.1",
+    "@typescript-eslint/parser": "^5.35.1",
+    "eslint": "8.22.0",
+    "eslint-config-next": "12.2.5",
+    "eslint-config-prettier": "^8.5.0",
+    "msw": "^0.47.4",
+    "typescript": "4.7"
+  },
+  "msw": {
+    "workerDirectory": "public"
+  }
+}

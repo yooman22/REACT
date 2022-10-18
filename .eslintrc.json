@@ -1,0 +1,24 @@
+{
+  "plugins": ["@typescript-eslint"],
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "arrow-body-style": 0, //arrow function no body 허용
+    "react/no-children-prop": 0, //children을 props로 전달 허용
+    "react/self-closing-comp": 2, //children이 없는 경우 self closing 불가
+    "@next/next/no-img-element": 2, //picture안에서 img 이외 img tag 사용 불가
+    "react/no-unescaped-entities": 0, //특정 문자 < > .. 허용
+    "import/no-useless-path-segments": 1, //불필요한 path segments 경고
+    "@typescript-eslint/ban-ts-comment": 0, //@ts-<directive> comments 허용
+    "@typescript-eslint/no-explicit-any": 0, //any 허용
+    "@typescript-eslint/no-empty-function": 0, //empty function 허용
+    "@typescript-eslint/no-non-null-assertion": 0, //!단언 연산 허용
+    "@typescript-eslint/explicit-module-boundary-types": 0, //명백한 반환값 체크 미사용
+    "@typescript-eslint/no-unused-vars": [
+      1,
+      {
+        "vars": "all",
+        "args": "none"
+      }
+    ] //선언 후 사용하지 않는 변수에대한 경고
+  }
+}
