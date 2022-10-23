@@ -1,14 +1,11 @@
 /*
 타입스크립트 설정 파일은 typescript 를 javascript로 변환할때의 설정을 정의해놓은 파일입니다.
 
-*/{
+*/ {
   "compilerOptions": {
     "baseUrl": ".", // 기준 디렉토리 설정
     "target": "es5", // 빌드될 자바스크립트의 버전
-    "lib": [
-      "es6",
-      "dom"
-    ], //빌드에 사용할 라이브러리들 지정하지 않는다면 target의 기본값으로 설정
+    "lib": ["dom", "dom.iterable", "esnext"], //빌드에 사용할 라이브러리들 지정하지 않는다면 target의 기본값으로 설정
     "strict": true, //strict mode true
     "noEmit": true, //typescript 출력여부 false == typscript를 typechecker로만 사용하는 경우
     "allowJs": true, //컴파일을 진행할때 js 파일을 허용
@@ -24,17 +21,9 @@
     "noFallthroughCasesInSwitch": true, //switch 구문을 쓰면서 자주하는 실수 검사
     "useUnknownInCatchVariables": false, //catch 문에 error 변수의 타입을 변경할 수 있는 옵션 false == any type
     "allowSyntheticDefaultImports": true, // default export가 없는 모듈에서 default imports를 허용
-    "forceConsistentCasingInFileNames": true // 파일명에 대소문자 구분하지 않아도 되는 기능 사용 여부
-    ,
+    "forceConsistentCasingInFileNames": true, // 파일명에 대소문자 구분하지 않아도 되는 기능 사용 여부
     "incremental": true
   },
-  "exclude": [
-    "node_modules"
-  ],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "src/pages/index.jsx"
-  ]
+  "exclude": ["node_modules"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/index.jsx"]
 }

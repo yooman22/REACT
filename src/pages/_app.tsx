@@ -11,6 +11,10 @@ import { Provider as ReduxProvider } from 'react-redux'
 import { store } from 'src/redux/store'
 import { AuthProvider } from 'src/contexts/AuthContext'
 
+if (process.env.NEXT_PUBLIC_API_MOCKING === 'enabled') {
+  require('../mocks')
+}
+
 type NextPageWithLayout = NextPage & {
   getLayout?: (page: ReactElement) => ReactNode
 } // nextjs component type boilerplate
