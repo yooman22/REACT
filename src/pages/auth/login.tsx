@@ -11,7 +11,7 @@ import GuestGuard from '../../guards/GuestGuard'
 // components
 
 import Page from 'src/components/common/Page'
-import LoginForm from 'src/section/auth/LoginForm'
+import LoginForm from 'src/components/auth/LoginForm'
 
 // ----------------------------------------------------------------------
 

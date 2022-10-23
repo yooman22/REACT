@@ -3,7 +3,7 @@ import { useState, ReactNode, useEffect } from 'react'
 import { useRouter } from 'next/router'
 // hooks
 import useAuth from '../hooks/useAuth'
-import Login from 'src/pages/auth/login'
+import Login from 'src/pages/auth/Login'
 
 // ----------------------------------------------------------------------
 
