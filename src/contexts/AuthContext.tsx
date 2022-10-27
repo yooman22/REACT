@@ -4,6 +4,7 @@ import axios from '../utils/axios'
 import { isValidToken, setSession } from '../utils/jwt'
 // @types
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../types/auth'
+import { PATH_AUTH } from 'src/routes'
 
 const LoginTypes = {
   Initial: 'INITIALIZE',
@@ -22,9 +23,7 @@ type JWTAuthPayload = {
     user: AuthUser
   }
   [LoginTypes.Logout]: undefined
-  [LoginTypes.Register]: {
-    user: AuthUser
-  }
+  [LoginTypes.Register]: {}
 }
 
 export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayload>]
@@ -59,8 +58,8 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
     case 'REGISTER':
       return {
         ...state,
-        isAuthenticated: true,
-        user: action.payload.user,
+        isAuthenticated: false,
+        user: null,
       }
 
     default:
@@ -86,7 +85,7 @@ function AuthProvider({ children }: AuthProviderProps) {
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken)
           const response = await axios.get('/api/account/user')
-
+          console.log(response)
           const { user } = response.data
 
           dispatch({
@@ -138,23 +137,21 @@ function AuthProvider({ children }: AuthProviderProps) {
     })
   }
 
-  const register = async (email: string, password: string, firstName: string, lastName: string) => {
+  const register = async (email: string, password: string, confirmPassword: string) => {
     const response = await axios.post('/api/account/register', {
       email,
       password,
-      firstName,
-      lastName,
+      confirmPassword,
     })
-    const { accessToken, user } = response.data
+    const { accessToken } = response.data
 
     localStorage.setItem('accessToken', accessToken)
 
     dispatch({
       type: LoginTypes.Register,
-      payload: {
-        user,
-      },
+      payload: {},
     })
+    window.location.href = PATH_AUTH.login
   }
 
   const logout = async () => {

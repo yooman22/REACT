@@ -10,10 +10,6 @@ import { Link, Stack, Alert, IconButton, InputAdornment } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 // routes
 
-// hooks
-
-// components
-
 import { PATH_AUTH } from 'src/routes'
 import Iconify from 'src/components/common/Iconify'
 import { RHFTextField, RHFCheckbox, FormProvider } from 'src/components/hook-form'
@@ -37,8 +33,8 @@ export default function LoginForm() {
   const [showPassword, setShowPassword] = useState(false)
 
   const LoginSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string().email('이메일 형식을 확인해주세요 ').required('이메일을 입력해주세요.'),
+    password: Yup.string().required('비밀번호를 입력해 주세요.'),
   })
 
   const defaultValues = {

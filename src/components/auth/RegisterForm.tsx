@@ -16,8 +16,7 @@ import { FormProvider, RHFTextField } from 'src/components/hook-form'
 type FormValuesProps = {
   email: string
   password: string
-  firstName: string
-  lastName: string
+  confirmPassword: string
   afterSubmit?: string
 }
 
@@ -26,16 +25,18 @@ export default function RegisterForm() {
 
   const isMountedRef = useIsMountedRef()
 
-  const [showPassword, setShowPassword] = useState(false)
-
   const RegisterSchema = Yup.object().shape({
-    email: Yup.string().email('Email must be a valid email address').required('Email is required'),
-    password: Yup.string().required('Password is required'),
+    email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
+    password: Yup.string().required('비밀번호를 입력해주세요.'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+      .required('비밀번호를 일치시켜 주세요.'),
   })
 
   const defaultValues = {
     email: '',
     password: '',
+    confirmPassword: '',
   }
 
   const methods = useForm<FormValuesProps>({
@@ -52,7 +53,9 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await register(data.email, data.password, data.firstName, data.lastName)
+      console.log(data)
+      await register(data.email, data.password, data.confirmPassword)
+      
     } catch (error) {
       console.error(error)
 
@@ -69,22 +72,10 @@ export default function RegisterForm() {
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
 
-        <RHFTextField name="email" label="Email address" />
+        <RHFTextField name="email" label="이메일" />
 
-        <RHFTextField
-          name="password"
-          label="Password"
-          type={showPassword ? 'text' : 'password'}
-          //   InputProps={{
-          //     endAdornment: (
-          //       <InputAdornment position="end">
-          //         <IconButton edge="end" onClick={() => setShowPassword(!showPassword)}>
-          //           <Iconify icon={showPassword ? 'eva:eye-fill' : 'eva:eye-off-fill'} />
-          //         </IconButton>
-          //       </InputAdornment>
-          //     ),
-          //   }}
-        />
+        <RHFTextField name="password" label="비밀번호" type={'password'} />
+        <RHFTextField name="confirmPassword" label="확인" type={'password'} />
 
         <LoadingButton
           fullWidth
@@ -93,7 +84,7 @@ export default function RegisterForm() {
           variant="contained"
           loading={isSubmitting}
         >
-          Register
+          회원가입
         </LoadingButton>
       </Stack>
     </FormProvider>

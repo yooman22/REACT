@@ -40,4 +40,19 @@ export const handlers = [
       })
     )
   }),
+
+  rest.post('/api/account/register', async (req, res, ctx) => {
+    const { email, password } = await req.json()
+
+    const accessToken = 'token'
+    return res(
+      ctx.status(200),
+      ctx.json({
+        data: {
+          accessToken,
+          message: 'Membership successful',
+        },
+      })
+    )
+  }),
 ]
