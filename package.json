@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint --ext .ts,.tsx .",
-    "re-install": "rm -rf .next .swc _static node_modules && npm install"
+    "re-install": "rm -rf .next .swc _static node_modules && npm install",
+    "debug": "node --inspect-brk ./node_modules/next/dist/bin/next"
   },
   "dependencies": {
     "@emotion/react": "^11.10.4",
