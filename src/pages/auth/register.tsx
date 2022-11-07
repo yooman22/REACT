@@ -37,7 +37,7 @@ export default function Register() {
             <ContentStyle>
               <RegisterForm />
               <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
-                Already have an account?{' '}
+                Already have an account?
                 <NextLink href={PATH_AUTH.login} passHref>
                   <Link variant="subtitle2">Login</Link>
                 </NextLink>

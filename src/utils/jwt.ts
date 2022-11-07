@@ -33,18 +33,25 @@ const handleTokenExpired = (exp: number) => {
     window.location.href = PATH_AUTH.login
   }, timeLeft)
 }
-
-const setSession = (accessToken: string | null) => {
+const onSilentRefresh = () => {
+  axios
+    .post('/silent-refresh', data)
+    .then(onLoginSuccess)
+    .catch((error) => {
+      // ... 로그인 실패 처리
+    })
+}
+const setAuth = (accessToken: string | null) => {
+  const JWT_EXPIRY_TIME = 24 * 3600 * 1000
   if (accessToken) {
     localStorage.setItem('accessToken', accessToken)
     axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
 
-    const { exp } = jwtDecode<{ exp: number }>(accessToken)
-    handleTokenExpired(exp)
+    setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000)
   } else {
     localStorage.removeItem('accessToken')
     delete axios.defaults.headers.common.Authorization
   }
 }
 
-export { isValidToken, setSession }
+export { isValidToken, setAuth }

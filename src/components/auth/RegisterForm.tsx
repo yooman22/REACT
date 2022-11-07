@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 // @mui
-import { Stack, IconButton, InputAdornment, Alert } from '@mui/material'
+import { Stack, IconButton, InputAdornment, Alert, Box } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import useAuth from 'src/hooks/useAuth'
 import useIsMountedRef from 'src/hooks/useIsMountedRef'
@@ -55,7 +55,6 @@ export default function RegisterForm() {
     try {
       console.log(data)
       await register(data.email, data.password, data.confirmPassword)
-      
     } catch (error) {
       console.error(error)
 
@@ -77,13 +76,7 @@ export default function RegisterForm() {
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
 
-        <LoadingButton
-          fullWidth
-          size="large"
-          type="submit"
-          variant="contained"
-          loading={isSubmitting}
-        >
+        <LoadingButton fullWidth size="large" type="submit" variant="contained">
           회원가입
         </LoadingButton>
       </Stack>

@@ -33,7 +33,6 @@ export default function AuthGuard({ children }: Props) {
 
   if (!isAuthenticated) {
     if (pathname !== requestedLocation) {
-      console.log(pathname)
       setRequestedLocation(pathname)
     }
     return (

@@ -1,7 +1,7 @@
 import { createContext, ReactNode, useEffect, useReducer } from 'react'
 // utils
 import axios from '../utils/axios'
-import { isValidToken, setSession } from '../utils/jwt'
+import { isValidToken, setAuth, setSession } from '../utils/jwt'
 // @types
 import { ActionMap, AuthState, AuthUser, JWTContextType } from '../types/auth'
 import { PATH_AUTH } from 'src/routes'
@@ -127,7 +127,7 @@ function AuthProvider({ children }: AuthProviderProps) {
     })
     const { accessToken, user } = response.data
 
-    setSession(accessToken)
+    setAuth(accessToken)
 
     dispatch({
       type: LoginTypes.Login,
@@ -141,11 +141,11 @@ function AuthProvider({ children }: AuthProviderProps) {
     const response = await axios.post('/api/account/register', {
       email,
       password,
-      confirmPassword,
     })
+
     const { accessToken } = response.data
 
-    localStorage.setItem('accessToken', accessToken)
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + accessToken
 
     dispatch({
       type: LoginTypes.Register,
