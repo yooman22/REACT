@@ -125,9 +125,9 @@ function AuthProvider({ children }: AuthProviderProps) {
       email,
       password,
     })
-    const { accessToken, user } = response.data
+    const { accessToken, refleshToken, user } = response.data
 
-    setAuth(accessToken)
+    setAuth(accessToken, refleshToken)
 
     dispatch({
       type: LoginTypes.Login,

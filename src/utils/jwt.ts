@@ -1,4 +1,5 @@
 import jwtDecode from 'jwt-decode'
+import Cookies from 'universal-cookie'
 // routes
 import { PATH_AUTH } from '../routes'
 //
@@ -33,24 +34,29 @@ const handleTokenExpired = (exp: number) => {
     window.location.href = PATH_AUTH.login
   }, timeLeft)
 }
-const onSilentRefresh = () => {
-  axios
-    .post('/silent-refresh', data)
-    .then(onLoginSuccess)
-    .catch((error) => {
-      // ... 로그인 실패 처리
-    })
-}
-const setAuth = (accessToken: string | null) => {
-  const JWT_EXPIRY_TIME = 24 * 3600 * 1000
-  if (accessToken) {
-    localStorage.setItem('accessToken', accessToken)
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+// const onSilentRefresh = () => {
+//   axios
+//     .post('/silent-refresh', data)
+//     .then(onLoginSuccess)
+//     .catch((error) => {
+//       // ... 로그인 실패 처리
+//     })
+// }
 
-    setTimeout(onSilentRefresh, JWT_EXPIRRY_TIME - 60000)
+export const setRefreshTokenToCookie = (refresh_token: string | null) => {
+  const cookies = new Cookies()
+  cookies.set('refresh_token', refresh_token, { sameSite: 'strict' })
+}
+const setAuth = (accessToken: string | null, refleshToken: string | null) => {
+  const JWT_EXPIRY_TIME = 24 * 3600 * 1000
+  const cookies = new Cookies()
+  if (accessToken) {
+    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+    setRefreshTokenToCookie(refleshToken)
   } else {
-    localStorage.removeItem('accessToken')
     delete axios.defaults.headers.common.Authorization
+
+    cookies.remove('refresh_token')
   }
 }
 
