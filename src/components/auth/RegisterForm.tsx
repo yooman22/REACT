@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 // @mui
-import { Stack, IconButton, InputAdornment, Alert } from '@mui/material'
+import { Stack, IconButton, InputAdornment, Alert, FormLabel } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import useAuth from 'src/hooks/useAuth'
 import useIsMountedRef from 'src/hooks/useIsMountedRef'
-import { FormProvider, RHFTextField } from 'src/components/hook-form'
+import { FormProvider, RHFCheckbox, RHFTextField } from 'src/components/hook-form'
+import StrongText from '../common/StrongText'
 // hooks
 
 // ----------------------------------------------------------------------
@@ -55,7 +56,6 @@ export default function RegisterForm() {
     try {
       console.log(data)
       await register(data.email, data.password, data.confirmPassword)
-      
     } catch (error) {
       console.error(error)
 
@@ -76,7 +76,10 @@ export default function RegisterForm() {
 
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
-
+        <Stack style={{ border: '1px' }}>
+          <StrongText title={'약관'} />
+          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
+        </Stack>
         <LoadingButton
           fullWidth
           size="large"
