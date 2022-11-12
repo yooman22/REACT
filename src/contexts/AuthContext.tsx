@@ -12,18 +12,35 @@ const LoginTypes = {
   Logout: 'LOGOUT',
   Register: 'REGISTER',
 } as const
+
+const AuthTypes = {
+  SetToken: 'SET_TOKEN',
+  GetToken: 'GET_TOKEN',
+} as const
+
 type LoginTypes = typeof LoginTypes[keyof typeof LoginTypes]
+type AuthTypes = typeof AuthTypes[keyof typeof AuthTypes]
 
 type JWTAuthPayload = {
   [LoginTypes.Initial]: {
     isAuthenticated: boolean
     user: AuthUser
+    token: string | null
   }
   [LoginTypes.Login]: {
     user: AuthUser
   }
   [LoginTypes.Logout]: undefined
-  [LoginTypes.Register]: {}
+
+  [LoginTypes.Register]: {
+    user: AuthUser
+  }
+  [AuthTypes.SetToken]: {
+    token: string
+  }
+  [AuthTypes.GetToken]: {
+    token: string
+  }
 }
 
 export type JWTActions = ActionMap<JWTAuthPayload>[keyof ActionMap<JWTAuthPayload>]
@@ -32,6 +49,7 @@ const initialState: AuthState = {
   isAuthenticated: false,
   isInitialized: false,
   user: null,
+  token: null,
 }
 
 const JWTReducer = (state: AuthState, action: JWTActions) => {
@@ -41,6 +59,7 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         isAuthenticated: action.payload.isAuthenticated,
         isInitialized: true,
         user: action.payload.user,
+        token: action.payload.token,
       }
     case 'LOGIN':
       return {
@@ -61,7 +80,18 @@ const JWTReducer = (state: AuthState, action: JWTActions) => {
         isAuthenticated: false,
         user: null,
       }
-
+    case 'SET_TOKEN':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      }
+    case 'GET_TOKEN':
+      return {
+        ...state,
+        isAuthenticated: false,
+        user: null,
+      }
     default:
       return state
   }
@@ -81,7 +111,8 @@ function AuthProvider({ children }: AuthProviderProps) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const accessToken = typeof window !== 'undefined' ? localStorage.getItem('accessToken') : ''
+        const accessToken = typeof window !== 'undefined' ? state.token : ''
+
         if (accessToken && isValidToken(accessToken)) {
           setSession(accessToken)
           const response = await axios.get('/api/account/user')
@@ -93,6 +124,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             payload: {
               isAuthenticated: true,
               user,
+              token: accessToken,
             },
           })
         } else {
@@ -101,6 +133,7 @@ function AuthProvider({ children }: AuthProviderProps) {
             payload: {
               isAuthenticated: false,
               user: null,
+              token: null,
             },
           })
         }
@@ -111,6 +144,7 @@ function AuthProvider({ children }: AuthProviderProps) {
           payload: {
             isAuthenticated: false,
             user: null,
+            token: null,
           },
         })
       }
@@ -143,13 +177,13 @@ function AuthProvider({ children }: AuthProviderProps) {
       password,
       confirmPassword,
     })
-    const { accessToken } = response.data
+    const { accessToken, user } = response.data
 
     localStorage.setItem('accessToken', accessToken)
 
     dispatch({
       type: LoginTypes.Register,
-      payload: {},
+      payload: { user },
     })
     window.location.href = PATH_AUTH.login
   }
