@@ -23,5 +23,5 @@
     "plugins": [{ "name": "typescript-plugin-css-modules", "jumpToDefinition": true }]
   },
   "exclude": ["node_modules"],
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/index.jsx"]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/index.jsx", "src/setupProxy.js"]
 }

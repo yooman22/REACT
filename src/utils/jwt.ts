@@ -1,14 +1,16 @@
+// libraries
 import jwtDecode from 'jwt-decode'
-// routes
-import { PATH_AUTH } from '../routes'
-//
+import Cookies from 'universal-cookie'
 import axios from './axios'
 
-const isValidToken = (accessToken: string) => {
-  if (!accessToken) {
+// routes
+import { PATH_AUTH } from '../routes'
+
+const isValidRefleshToken = (refleshToken: string) => {
+  if (!refleshToken) {
     return false
   }
-  const decoded = jwtDecode<{ exp: number }>(accessToken)
+  const decoded = jwtDecode<{ exp: number }>(refleshToken)
 
   const currentTime = Date.now() / 1000
 
@@ -34,17 +36,27 @@ const handleTokenExpired = (exp: number) => {
   }, timeLeft)
 }
 
-const setSession = (accessToken: string | null) => {
-  if (accessToken) {
-    localStorage.setItem('accessToken', accessToken)
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
-
-    const { exp } = jwtDecode<{ exp: number }>(accessToken)
-    handleTokenExpired(exp)
+export const setRefreshToken = (refleshToken: string | null) => {
+  const cookies = new Cookies()
+  if (refleshToken) {
+    cookies.set('refleshToken', refleshToken, { sameSite: 'strict' })
   } else {
-    localStorage.removeItem('accessToken')
+    cookies.remove('refleshToken')
+  }
+}
+
+export const setAccessToken = (accessToken: string | null) => {
+  if (accessToken) {
+    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+  } else {
     delete axios.defaults.headers.common.Authorization
   }
 }
 
-export { isValidToken, setSession }
+const setAuth = (accessToken: string | null, refleshToken: string | null) => {
+  //회원가입에 성공하는 경우  accessToken, relfeshToken 받는다.
+  setAccessToken(accessToken)
+  setRefreshToken(refleshToken)
+}
+
+export { isValidRefleshToken, setAuth }

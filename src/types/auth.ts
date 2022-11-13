@@ -18,6 +18,12 @@ export type AuthState = {
   token: Token
 }
 
+export type AuthenticatedUser = {
+  user: AuthUser
+  accessToken: string
+  refleshToken: string
+}
+
 export type JWTContextType = {
   isAuthenticated: boolean
   isInitialized: boolean
