@@ -71,9 +71,9 @@ export default function RegisterForm() {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
-
+        <StrongText title={'이메일'} />
         <RHFTextField name="email" label="이메일" />
-
+        <StrongText title={'비밀번호'} />
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
         <Stack style={{ border: '1px' }}>

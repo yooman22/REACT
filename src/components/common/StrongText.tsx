@@ -1,12 +1,12 @@
-import styles from 'src/styles/Form.module.scss'
+import sFrom from 'src/styles/Form.module.scss'
 interface Props {
   title: string
 }
 
 const StrongText = ({ title }: Props) => {
   return (
-    <span className={styles.form_strong}>
-      <strong>{title}</strong>
+    <span>
+      <strong className={`${sFrom.strong}`}>{title}</strong>
     </span>
   )
 }

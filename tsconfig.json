@@ -19,15 +19,9 @@
     "useUnknownInCatchVariables": false, //catch 문에 error 변수의 타입을 변경할 수 있는 옵션 false == any type
     "allowSyntheticDefaultImports": true, // default export가 없는 모듈에서 default imports를 허용
     "forceConsistentCasingInFileNames": true, // 파일명에 대소문자 구분하지 않아도 되는 기능 사용 여부
-    "incremental": true
+    "incremental": true,
+    "plugins": [{ "name": "typescript-plugin-css-modules", "jumpToDefinition": true }]
   },
   "exclude": ["node_modules"],
-  "include": [
-    "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
-    "src/pages/index.jsx",
-    "src/styles/*.*.sass",
-    "src/styles/*.*.css"
-  ]
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "src/pages/index.jsx"]
 }

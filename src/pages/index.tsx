@@ -1,18 +1,14 @@
 // libraries
 import React from 'react'
 import AppLayout from 'src/layouts'
-import styles from '../styles/Form.module.scss'
+// import styles from '../styles/Form.module.scss'
 //containers
 import MainPage from 'src/pages/main'
 
+import sFrom from '../styles/Form.module.scss'
+
 export default function HomePage() {
-  return (
-    <div>
-      <span className={styles.form_strong}>
-        <strong>ss</strong>
-      </span>
-    </div>
-  )
+  return <MainPage />
 }
 
 HomePage.getLayout = function getLayout(page: React.ReactElement) {
