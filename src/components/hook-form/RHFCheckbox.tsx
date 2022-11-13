@@ -1,17 +1,17 @@
 // form
-import { useFormContext, Controller } from 'react-hook-form';
+import { useFormContext, Controller } from 'react-hook-form'
 // @mui
-import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@mui/material';
+import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@mui/material'
 
 // ----------------------------------------------------------------------
 
 interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
-  name: string;
+  name: string
 }
 
 export function RHFCheckbox({ name, ...other }: RHFCheckboxProps) {
-  const { control } = useFormContext();
-
+  const { control } = useFormContext()
+  console.log(other)
   return (
     <FormControlLabel
       control={
@@ -23,21 +23,21 @@ export function RHFCheckbox({ name, ...other }: RHFCheckboxProps) {
       }
       {...other}
     />
-  );
+  )
 }
 
 // ----------------------------------------------------------------------
 
 interface RHFMultiCheckboxProps extends Omit<FormControlLabelProps, 'control' | 'label'> {
-  name: string;
+  name: string
   options: {
-    label: string;
-    value: any;
-  }[];
+    label: string
+    value: any
+  }[]
 }
 
 export function RHFMultiCheckbox({ name, options, ...other }: RHFMultiCheckboxProps) {
-  const { control } = useFormContext();
+  const { control } = useFormContext()
 
   return (
     <Controller
@@ -47,7 +47,7 @@ export function RHFMultiCheckbox({ name, options, ...other }: RHFMultiCheckboxPr
         const onSelected = (option: string) =>
           field.value.includes(option)
             ? field.value.filter((value: string) => value !== option)
-            : [...field.value, option];
+            : [...field.value, option]
 
         return (
           <FormGroup>
@@ -65,8 +65,8 @@ export function RHFMultiCheckbox({ name, options, ...other }: RHFMultiCheckboxPr
               />
             ))}
           </FormGroup>
-        );
+        )
       }}
     />
-  );
+  )
 }

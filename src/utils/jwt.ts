@@ -1,15 +1,16 @@
+// libraries
 import jwtDecode from 'jwt-decode'
 import Cookies from 'universal-cookie'
-// routes
-import { PATH_AUTH } from '../routes'
-//
 import axios from './axios'
 
-const isValidToken = (accessToken: string) => {
-  if (!accessToken) {
+// routes
+import { PATH_AUTH } from '../routes'
+
+const isValidRefleshToken = (refleshToken: string) => {
+  if (!refleshToken) {
     return false
   }
-  const decoded = jwtDecode<{ exp: number }>(accessToken)
+  const decoded = jwtDecode<{ exp: number }>(refleshToken)
 
   const currentTime = Date.now() / 1000
 
@@ -34,30 +35,28 @@ const handleTokenExpired = (exp: number) => {
     window.location.href = PATH_AUTH.login
   }, timeLeft)
 }
-// const onSilentRefresh = () => {
-//   axios
-//     .post('/silent-refresh', data)
-//     .then(onLoginSuccess)
-//     .catch((error) => {
-//       // ... 로그인 실패 처리
-//     })
-// }
 
-export const setRefreshTokenToCookie = (refresh_token: string | null) => {
+export const setRefreshToken = (refleshToken: string | null) => {
   const cookies = new Cookies()
-  cookies.set('refresh_token', refresh_token, { sameSite: 'strict' })
-}
-const setAuth = (accessToken: string | null, refleshToken: string | null) => {
-  const JWT_EXPIRY_TIME = 24 * 3600 * 1000
-  const cookies = new Cookies()
-  if (accessToken) {
-    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
-    setRefreshTokenToCookie(refleshToken)
+  if (refleshToken) {
+    cookies.set('refleshToken', refleshToken, { sameSite: 'strict' })
   } else {
-    delete axios.defaults.headers.common.Authorization
-
-    cookies.remove('refresh_token')
+    cookies.remove('refleshToken')
   }
 }
 
-export { isValidToken, setAuth }
+export const setAccessToken = (accessToken: string | null) => {
+  if (accessToken) {
+    axios.defaults.headers.common.Authorization = `Bearer ${accessToken}`
+  } else {
+    delete axios.defaults.headers.common.Authorization
+  }
+}
+
+const setAuth = (accessToken: string | null, refleshToken: string | null) => {
+  //회원가입에 성공하는 경우  accessToken, relfeshToken 받는다.
+  setAccessToken(accessToken)
+  setRefreshToken(refleshToken)
+}
+
+export { isValidRefleshToken, setAuth }

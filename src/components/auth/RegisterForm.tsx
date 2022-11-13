@@ -4,11 +4,12 @@ import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 // @mui
-import { Stack, IconButton, InputAdornment, Alert, Box } from '@mui/material'
+import { Stack, IconButton, InputAdornment, Alert, FormLabel } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import useAuth from 'src/hooks/useAuth'
 import useIsMountedRef from 'src/hooks/useIsMountedRef'
-import { FormProvider, RHFTextField } from 'src/components/hook-form'
+import { FormProvider, RHFCheckbox, RHFTextField } from 'src/components/hook-form'
+import StrongText from '../common/StrongText'
 // hooks
 
 // ----------------------------------------------------------------------
@@ -70,13 +71,22 @@ export default function RegisterForm() {
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
         {!!errors.afterSubmit && <Alert severity="error">{errors.afterSubmit.message}</Alert>}
-
+        <StrongText title={'이메일'} />
         <RHFTextField name="email" label="이메일" />
-
+        <StrongText title={'비밀번호'} />
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
-
-        <LoadingButton fullWidth size="large" type="submit" variant="contained">
+        <Stack style={{ border: '1px' }}>
+          <StrongText title={'약관'} />
+          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
+        </Stack>
+        <LoadingButton
+          fullWidth
+          size="large"
+          type="submit"
+          variant="contained"
+          loading={isSubmitting}
+        >
           회원가입
         </LoadingButton>
       </Stack>
