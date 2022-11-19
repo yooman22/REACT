@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 // form
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -8,8 +8,11 @@ import { Stack, IconButton, InputAdornment, Alert, FormLabel } from '@mui/materi
 import { LoadingButton } from '@mui/lab'
 import useAuth from 'src/hooks/useAuth'
 import useIsMountedRef from 'src/hooks/useIsMountedRef'
-import { FormProvider, RHFCheckbox, RHFTextField } from 'src/components/hook-form'
+import { FormProvider, RHFCheckbox, RHFMultiCheckbox, RHFTextField } from 'src/components/hook-form'
 import StrongText from '../common/StrongText'
+import axios from 'axios'
+import { useQuery } from 'react-query'
+import { signUpTerms } from 'src/apis/terms'
 // hooks
 
 // ----------------------------------------------------------------------
@@ -24,7 +27,9 @@ type FormValuesProps = {
 export default function RegisterForm() {
   const { register } = useAuth()
 
-  const isMountedRef = useIsMountedRef()
+  const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
+
+  console.log(data, 'asdasda')
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
@@ -45,6 +50,10 @@ export default function RegisterForm() {
     defaultValues,
   })
 
+  const isMountedRef = useIsMountedRef()
+  if (isLoading) {
+    return <p>loading...</p>
+  }
   const {
     reset,
     setError,
@@ -79,6 +88,10 @@ export default function RegisterForm() {
         <Stack style={{ border: '1px' }}>
           <StrongText title={'약관'} />
           <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
+          {data?.map((term) => (
+            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
+          ))}
+          <RHFMultiCheckbox name="isDefault1" options={[]} />
         </Stack>
         <LoadingButton
           fullWidth

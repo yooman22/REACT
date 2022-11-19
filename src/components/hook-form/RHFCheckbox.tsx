@@ -11,7 +11,7 @@ interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
 
 export function RHFCheckbox({ name, ...other }: RHFCheckboxProps) {
   const { control } = useFormContext()
-  console.log(other)
+
   return (
     <FormControlLabel
       control={
@@ -33,6 +33,7 @@ interface RHFMultiCheckboxProps extends Omit<FormControlLabelProps, 'control' | 
   options: {
     label: string
     value: any
+    required: boolean
   }[]
 }
 

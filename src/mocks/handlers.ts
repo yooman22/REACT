@@ -33,6 +33,51 @@ export const handlers = [
       })
     )
   }),
+
+  rest.get('/api/terms/sign-up', (req, res, ctx) => {
+    return res(
+      ctx.status(200),
+      ctx.json({
+        terms: [
+          {
+            id: 1,
+            content: '(필수) 개인정보 수집 및 이용에 동의',
+            name: '약관_1',
+            required: true,
+            link: 'https://www.saramin.co.kr/zf_user/help/terms-of-service/person',
+          },
+          {
+            id: 2,
+            name: '약관_2',
+            content: '(필수) 개인정보 수집 및 이용에 동의',
+            required: true,
+            link: 'https://www.saramin.co.kr/zf_user/help/terms-of-service/person',
+          },
+          {
+            id: 3,
+            name: '약관_3',
+            content: '(선택) 위치기반서비스 이용약관에 동의',
+            required: false,
+            link: 'https://www.saramin.co.kr/zf_user/help/terms-of-service/person',
+          },
+          {
+            id: 4,
+            name: '약관_4',
+            content: '(선택) 마케팅 정보 수신 동의 - 이메일',
+            required: false,
+            link: 'https://www.saramin.co.kr/zf_user/help/terms-of-service/person',
+          },
+          {
+            id: 5,
+            name: '약관_5',
+            content: '(선택) 마케팅 정보 수신 동의 - SMS/MMS',
+            required: false,
+            link: 'https://www.saramin.co.kr/zf_user/help/terms-of-service/person',
+          },
+        ],
+      })
+    )
+  }),
   rest.post('/api/account/login', async (req, res, ctx) => {
     const { email, password } = await req.json()
 
