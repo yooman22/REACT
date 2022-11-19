@@ -13,6 +13,7 @@ import StrongText from '../common/StrongText'
 import axios from 'axios'
 import { useQuery } from 'react-query'
 import { signUpTerms } from 'src/apis/terms'
+import RegisterFormTerms from './RegisterFormTerms'
 // hooks
 
 // ----------------------------------------------------------------------
@@ -26,10 +27,6 @@ type FormValuesProps = {
 
 export default function RegisterForm() {
   const { register } = useAuth()
-
-  const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
-
-  console.log(data, 'asdasda')
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
@@ -51,9 +48,7 @@ export default function RegisterForm() {
   })
 
   const isMountedRef = useIsMountedRef()
-  if (isLoading) {
-    return <p>loading...</p>
-  }
+
   const {
     reset,
     setError,
@@ -85,14 +80,7 @@ export default function RegisterForm() {
         <StrongText title={'비밀번호'} />
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
-        <Stack style={{ border: '1px' }}>
-          <StrongText title={'약관'} />
-          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
-          {data?.map((term) => (
-            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
-          ))}
-          <RHFMultiCheckbox name="isDefault1" options={[]} />
-        </Stack>
+        <RegisterFormTerms />
         <LoadingButton
           fullWidth
           size="large"
