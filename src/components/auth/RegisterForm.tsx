@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { useEffect, useState } from 'react'
+import { SyntheticEvent, useEffect, useState } from 'react'
 // form
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -12,7 +12,7 @@ import { FormProvider, RHFCheckbox, RHFMultiCheckbox, RHFTextField } from 'src/c
 import StrongText from '../common/StrongText'
 import axios from 'axios'
 import { useQuery } from 'react-query'
-import { signUpTerms } from 'src/apis/terms'
+import { signUpTerms, Terms } from 'src/apis/terms'
 import RegisterFormTerms from './RegisterFormTerms'
 // hooks
 
@@ -25,8 +25,30 @@ type FormValuesProps = {
   afterSubmit?: string
 }
 
+interface TermsCheck extends Terms {
+  checked: boolean
+}
+
 export default function RegisterForm() {
   const { register } = useAuth()
+
+  const getTerms = useQuery('repoData', signUpTerms, {
+    select(data) {
+      const terms = data.map((term) => ({ ...term, checked: true }))
+      return terms
+    },
+  })
+  const [terms, setTerms] = useState<TermsCheck[] | undefined>(undefined)
+
+  useEffect(() => {
+    if (!getTerms.isLoading) {
+      setTerms(getTerms.data)
+    }
+  }, [getTerms.data, getTerms.isLoading])
+
+  const handleChange = (e: SyntheticEvent<Element, Event>) => {
+    setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
+  }
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
@@ -40,6 +62,7 @@ export default function RegisterForm() {
     email: '',
     password: '',
     confirmPassword: '',
+    checkList: [],
   }
 
   const methods = useForm<FormValuesProps>({
@@ -58,7 +81,6 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      console.log(data)
       await register(data.email, data.password, data.confirmPassword)
     } catch (error) {
       console.error(error)
@@ -80,7 +102,7 @@ export default function RegisterForm() {
         <StrongText title={'비밀번호'} />
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
-        <RegisterFormTerms />
+        <RegisterFormTerms terms={terms} handleChange={handleChange} />
         <LoadingButton
           fullWidth
           size="large"

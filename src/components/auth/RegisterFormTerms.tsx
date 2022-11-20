@@ -11,21 +11,13 @@ import { SyntheticEvent, useEffect, useRef, useState } from 'react'
 interface TermsCheck extends Terms {
   checked: boolean
 }
-export default function RegisterFormTerms() {
-  const getTerms = useQuery('repoData', signUpTerms)
-  const [terms, setTerms] = useState<TermsCheck[] | undefined>(undefined)
-
-  useEffect(() => {
-    if (!terms) {
-      setTerms(getTerms.data?.map((term) => ({ ...term, checked: true })) || [])
-    }
-  }, [getTerms.data, terms])
-
+interface Props {
+  terms: TermsCheck[] | undefined
+  handleChange: ((event: SyntheticEvent<Element, Event>) => void) | undefined
+}
+export default function RegisterFormTerms({ terms, handleChange }: Props) {
   const requiredStyle = {
     fontWeight: 'bold',
-  }
-  const handleChange = (e: SyntheticEvent<Element, Event>) => {
-    setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
   }
 
   return (
@@ -38,13 +30,13 @@ export default function RegisterFormTerms() {
         sx={{ mt: 1 }}
         value={false}
       />
-      {terms?.map((term) => (
-        <FormGroup key={term.id}>
-          <Box>
+      <FormGroup>
+        {terms?.map((term) => (
+          <Box key={term.id}>
             <RHFCheckbox
               name={term.name}
               value={term.checked}
-              //   onChange={handleChange}
+              onChange={handleChange}
               label={
                 <Typography style={{ ...(term.required && requiredStyle) }}>
                   {term.content}
@@ -57,8 +49,8 @@ export default function RegisterFormTerms() {
               </a>
             </Link>
           </Box>
-        </FormGroup>
-      ))}
+        ))}
+      </FormGroup>
     </Stack>
   )
 }
