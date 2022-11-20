@@ -8,11 +8,9 @@ import { RHFCheckbox } from '../hook-form'
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos'
 import Link from 'next/link'
 import { SyntheticEvent, useEffect, useRef, useState } from 'react'
-interface TermsCheck extends Terms {
-  checked: boolean
-}
+
 interface Props {
-  terms: TermsCheck[] | undefined
+  terms: Terms[] | undefined
   handleChange: ((event: SyntheticEvent<Element, Event>) => void) | undefined
 }
 export default function RegisterFormTerms({ terms, handleChange }: Props) {
@@ -22,15 +20,15 @@ export default function RegisterFormTerms({ terms, handleChange }: Props) {
 
   return (
     <Stack style={{ border: '1px' }}>
-      <StrongText title={'약관'} />
-      <RHFCheckbox
-        onChange={handleChange}
-        name="allCheck"
-        label="전체 동의"
-        sx={{ mt: 1 }}
-        value={false}
-      />
       <FormGroup>
+        <StrongText title={'약관'} />
+        <RHFCheckbox
+          onChange={handleChange}
+          name="allCheck"
+          label="전체 동의"
+          sx={{ mt: 1 }}
+          value={false}
+        />
         {terms?.map((term) => (
           <Box key={term.id}>
             <RHFCheckbox

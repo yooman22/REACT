@@ -25,20 +25,11 @@ type FormValuesProps = {
   afterSubmit?: string
 }
 
-interface TermsCheck extends Terms {
-  checked: boolean
-}
-
 export default function RegisterForm() {
   const { register } = useAuth()
 
-  const getTerms = useQuery('repoData', signUpTerms, {
-    select(data) {
-      const terms = data.map((term) => ({ ...term, checked: true }))
-      return terms
-    },
-  })
-  const [terms, setTerms] = useState<TermsCheck[] | undefined>(undefined)
+  const getTerms = useQuery('repoData', signUpTerms)
+  const [terms, setTerms] = useState<Terms[] | undefined>(undefined)
 
   useEffect(() => {
     if (!getTerms.isLoading) {
@@ -79,9 +70,10 @@ export default function RegisterForm() {
     formState: { errors, isSubmitting },
   } = methods
 
-  const onSubmit = async (data: FormValuesProps) => {
+  const onSubmit = async (data) => {
     try {
-      await register(data.email, data.password, data.confirmPassword)
+      console.log(data)
+      //await register(data.email, data.password, data.confirmPassword)
     } catch (error) {
       console.error(error)
 

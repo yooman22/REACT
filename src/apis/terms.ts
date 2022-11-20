@@ -6,6 +6,7 @@ export type Terms = {
   content: string
   required: boolean
   link: string
+  checked: boolean
 }
 
 export interface GetTerms {
