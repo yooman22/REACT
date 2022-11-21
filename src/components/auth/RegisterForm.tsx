@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { SyntheticEvent, useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 // form
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -12,8 +12,8 @@ import { FormProvider, RHFCheckbox, RHFMultiCheckbox, RHFTextField } from 'src/c
 import StrongText from '../common/StrongText'
 import axios from 'axios'
 import { useQuery } from 'react-query'
-import { signUpTerms, Terms } from 'src/apis/terms'
-import RegisterFormTerms from './RegisterFormTerms'
+import { signUpTerms } from 'src/apis/terms'
+import getValidationSchema from 'src/utils/getValidationSchema'
 // hooks
 
 // ----------------------------------------------------------------------
@@ -27,20 +27,38 @@ type FormValuesProps = {
 
 export default function RegisterForm() {
   const { register } = useAuth()
+  let shapeObject = {}
 
-  const getTerms = useQuery('repoData', signUpTerms)
-  const [terms, setTerms] = useState<Terms[] | undefined>(undefined)
-
-  useEffect(() => {
-    if (!getTerms.isLoading) {
-      setTerms(getTerms.data)
-    }
-  }, [getTerms.data, getTerms.isLoading])
-
-  const handleChange = (e: SyntheticEvent<Element, Event>) => {
-    setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
+  const customFields = [
+    {
+      name: 'firstName', // Name should be unique and is our identifier
+      type: 'checkbox',
+    },
+  ]
+  // Extend customFields with validation based on type
+  // As an example we only extend the URL type fields
+  const useCustomFieldsExtendValidation = (customFields: any[]) => {
+    return customFields.map((customField) => {
+      switch (customField.type) {
+        case 'checkbox':
+          return {
+            ...customField,
+            validationType: 'boolean',
+          }
+        default:
+          return customField
+      }
+    })
   }
+  console.log(useCustomFieldsExtendValidation(customFields))
 
+  const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
+  useEffect(() => {
+    if (!isLoading) {
+    }
+  }, [])
+
+  console.log(data, 'asdasda')
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
     password: Yup.string().required('비밀번호를 입력해주세요.'),
@@ -48,12 +66,10 @@ export default function RegisterForm() {
       .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
       .required('비밀번호를 일치시켜 주세요.'),
   })
-
   const defaultValues = {
     email: '',
     password: '',
     confirmPassword: '',
-    checkList: [],
   }
 
   const methods = useForm<FormValuesProps>({
@@ -70,10 +86,10 @@ export default function RegisterForm() {
     formState: { errors, isSubmitting },
   } = methods
 
-  const onSubmit = async (data) => {
+  const onSubmit = async (data: FormValuesProps) => {
     try {
       console.log(data)
-      //await register(data.email, data.password, data.confirmPassword)
+      await register(data.email, data.password, data.confirmPassword)
     } catch (error) {
       console.error(error)
 
@@ -94,7 +110,14 @@ export default function RegisterForm() {
         <StrongText title={'비밀번호'} />
         <RHFTextField name="password" label="비밀번호" type={'password'} />
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
-        <RegisterFormTerms terms={terms} handleChange={handleChange} />
+        <Stack style={{ border: '1px' }}>
+          <StrongText title={'약관'} />
+          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
+          {data?.map((term) => (
+            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
+          ))}
+          <RHFMultiCheckbox name="isDefault1" options={[]} />
+        </Stack>
         <LoadingButton
           fullWidth
           size="large"
