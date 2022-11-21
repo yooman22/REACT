@@ -2,30 +2,33 @@
 import { useFormContext, Controller } from 'react-hook-form'
 // @mui
 import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@mui/material'
+import { ChangeEvent } from 'react'
 
 // ----------------------------------------------------------------------
 
 interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
   name: string
+  value: boolean
 }
 
-export function RHFCheckbox({ name, ...other }: RHFCheckboxProps) {
+export function RHFCheckbox({ name, value, onChange, ...other }: RHFCheckboxProps) {
   const { control } = useFormContext()
-
   return (
     <FormControlLabel
       control={
         <Controller
           name={name}
           control={control}
-          render={({ field }) => <Checkbox {...field} checked={field.value} />}
+          render={({ field }) => {
+            return <Checkbox {...field} checked={value} onChange={onChange} />
+          }}
         />
       }
       {...other}
     />
   )
 }
-
+this
 // ----------------------------------------------------------------------
 
 interface RHFMultiCheckboxProps extends Omit<FormControlLabelProps, 'control' | 'label'> {
