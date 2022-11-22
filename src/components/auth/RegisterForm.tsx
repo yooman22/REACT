@@ -1,5 +1,5 @@
 import * as Yup from 'yup'
-import { useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 // form
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -31,41 +31,41 @@ export default function RegisterForm() {
 
   const customFields = [
     {
-      name: 'firstName', // Name should be unique and is our identifier
-      type: 'checkbox',
+      name: 'phoneNumber',
+      label: 'phone number',
+      validationType: 'string',
+      required: true,
+      type: 'text',
+      value: '7878787878',
+      values: [],
+      validations: [
+        {
+          type: 'required',
+          params: ['Required'],
+        },
+      ],
     },
   ]
-  // Extend customFields with validation based on type
-  // As an example we only extend the URL type fields
-  const useCustomFieldsExtendValidation = (customFields: any[]) => {
-    return customFields.map((customField) => {
-      switch (customField.type) {
-        case 'checkbox':
-          return {
-            ...customField,
-            validationType: 'boolean',
-          }
-        default:
-          return customField
-      }
-    })
-  }
-  console.log(useCustomFieldsExtendValidation(customFields))
+
+  const extraSchema = getValidationSchema(customFields)
 
   const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
-  useEffect(() => {
+  useMemo(() => {
     if (!isLoading) {
+      const termsData = data
     }
   }, [])
 
-  console.log(data, 'asdasda')
-  const RegisterSchema = Yup.object().shape({
-    email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
-    password: Yup.string().required('비밀번호를 입력해주세요.'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-      .required('비밀번호를 일치시켜 주세요.'),
-  })
+  const RegisterSchema = Yup.object()
+    .shape({
+      email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
+      password: Yup.string().required('비밀번호를 입력해주세요.'),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+        .required('비밀번호를 일치시켜 주세요.'),
+    })
+    .concat(extraSchema)
+
   const defaultValues = {
     email: '',
     password: '',
@@ -88,7 +88,6 @@ export default function RegisterForm() {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      console.log(data)
       await register(data.email, data.password, data.confirmPassword)
     } catch (error) {
       console.error(error)
@@ -112,9 +111,15 @@ export default function RegisterForm() {
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
         <Stack style={{ border: '1px' }}>
           <StrongText title={'약관'} />
-          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
+          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} value={false} />
           {data?.map((term) => (
-            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
+            <RHFCheckbox
+              name={term.name}
+              key={term.id}
+              label={term.content}
+              sx={{ mt: 1 }}
+              value={false}
+            />
           ))}
           <RHFMultiCheckbox name="isDefault1" options={[]} />
         </Stack>

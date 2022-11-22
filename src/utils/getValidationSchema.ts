@@ -1,5 +1,41 @@
 import * as yup from 'yup'
-
+/*
+ const fields = [
+  {
+    name: 'applicant.0.firstName', // in an array
+    label: 'First name',
+    validationType: 'string',
+    validations: [
+      {
+        type: 'required',
+        params: ['Required']
+      }
+    ]
+  },
+  {
+    name: 'person.lastName', // nested in an object
+    label: 'Last name',
+    validationType: 'string',
+    validations: [
+      {
+        type: 'required',
+        params: ['Required']
+      }
+    ]
+  },
+    {
+    name: 'email', // non nested, non array
+    label: 'Email',
+    validationType: 'string',
+    validations: [
+      {
+        type: 'required',
+        params: ['Required']
+      }
+    ]
+  }
+]
+*/
 const getValidationSchema = (fields: any[]) => {
   const schema = fields.reduce((schema, field) => {
     const { name, validationType, validationTypeError, validations = [] } = field
