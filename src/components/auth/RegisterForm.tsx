@@ -27,6 +27,7 @@ type FormValuesProps = {
 
 export default function RegisterForm() {
   const { register } = useAuth()
+  const [pageLoading, setPageLoading] = useState(true)
   let shapeObject = {}
 
   const customFields = [
@@ -50,21 +51,21 @@ export default function RegisterForm() {
   const extraSchema = getValidationSchema(customFields)
 
   const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
-  useMemo(() => {
+  useEffect(() => {
     if (!isLoading) {
       const termsData = data
+      setPageLoading(false)
     }
-  }, [])
+  }, [data, isLoading])
 
-  const RegisterSchema = Yup.object()
-    .shape({
-      email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
-      password: Yup.string().required('비밀번호를 입력해주세요.'),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-        .required('비밀번호를 일치시켜 주세요.'),
-    })
-    .concat(extraSchema)
+  const RegisterSchema = Yup.object().shape({
+    email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
+    password: Yup.string().required('비밀번호를 입력해주세요.'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+      .required('비밀번호를 일치시켜 주세요.'),
+  })
+  // .concat(extraSchema)
 
   const defaultValues = {
     email: '',
@@ -99,7 +100,9 @@ export default function RegisterForm() {
       }
     }
   }
-
+  if (pageLoading) {
+    return <p>Loading!</p>
+  }
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
