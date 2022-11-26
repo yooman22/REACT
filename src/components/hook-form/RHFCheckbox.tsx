@@ -2,7 +2,6 @@
 import { useFormContext, Controller } from 'react-hook-form'
 // @mui
 import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@mui/material'
-import { ChangeEvent } from 'react'
 
 // ----------------------------------------------------------------------
 

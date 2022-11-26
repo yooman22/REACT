@@ -1,20 +1,18 @@
 import * as Yup from 'yup'
-import { useEffect, useMemo, useState } from 'react'
 // form
 import { useForm } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 // @mui
-import { Stack, IconButton, InputAdornment, Alert, FormLabel } from '@mui/material'
+import { Stack, Alert } from '@mui/material'
 import { LoadingButton } from '@mui/lab'
 import useAuth from 'src/hooks/useAuth'
 import useIsMountedRef from 'src/hooks/useIsMountedRef'
 import { FormProvider, RHFCheckbox, RHFMultiCheckbox, RHFTextField } from 'src/components/hook-form'
 import StrongText from '../common/StrongText'
-import axios from 'axios'
-import { useQuery } from 'react-query'
-import { signUpTerms } from 'src/apis/terms'
 import getValidationSchema from 'src/utils/getValidationSchema'
-// hooks
+
+// types
+import { Terms } from 'src/apis/terms'
 
 // ----------------------------------------------------------------------
 
@@ -25,10 +23,12 @@ type FormValuesProps = {
   afterSubmit?: string
 }
 
-export default function RegisterForm() {
+interface RegisterFormProps {
+  serverLayout: { item: Terms[] | undefined }
+}
+
+export default function RegisterForm({ serverLayout }: RegisterFormProps) {
   const { register } = useAuth()
-  const [pageLoading, setPageLoading] = useState(true)
-  let shapeObject = {}
 
   const customFields = [
     {
@@ -49,14 +49,6 @@ export default function RegisterForm() {
   ]
 
   const extraSchema = getValidationSchema(customFields)
-
-  const { isLoading, isError, data } = useQuery('repoData', signUpTerms)
-  useEffect(() => {
-    if (!isLoading) {
-      const termsData = data
-      setPageLoading(false)
-    }
-  }, [data, isLoading])
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
@@ -100,9 +92,7 @@ export default function RegisterForm() {
       }
     }
   }
-  if (pageLoading) {
-    return <p>Loading!</p>
-  }
+
   return (
     <FormProvider methods={methods} onSubmit={handleSubmit(onSubmit)}>
       <Stack spacing={3}>
@@ -115,7 +105,7 @@ export default function RegisterForm() {
         <Stack style={{ border: '1px' }}>
           <StrongText title={'약관'} />
           <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} value={false} />
-          {data?.map((term) => (
+          {serverLayout.item?.map((term) => (
             <RHFCheckbox
               name={term.name}
               key={term.id}

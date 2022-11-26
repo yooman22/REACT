@@ -38,7 +38,7 @@ export default function MyApp(props: MyAppProps) {
       <AuthProvider>
         <ReduxProvider store={store}>
           <QueryClientProvider client={queryClient}>
-          {getLayout(<Component {...pageProps} />)}
+            {getLayout(<Component {...pageProps} />)}
           </QueryClientProvider>
         </ReduxProvider>
       </AuthProvider>

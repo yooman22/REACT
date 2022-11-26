@@ -2,13 +2,17 @@
 import NextLink from 'next/link'
 // @mui
 import { styled } from '@mui/material/styles'
-import { Box, Link, Container, Typography } from '@mui/material'
+import { Link, Container, Typography } from '@mui/material'
 
 // guards
 import GuestGuard from '../../guards/GuestGuard'
 import Page from 'src/components/common/Page'
 import RegisterForm from 'src/components/auth/RegisterForm'
 import { PATH_AUTH } from 'src/routes'
+
+import { signUpTerms } from 'src/apis/terms'
+import { useQuery } from 'react-query'
+import LoadingScreen from 'src/components/common/LoadingScreen'
 
 const RootStyle = styled('div')(({ theme }) => ({
   [theme.breakpoints.up('md')]: {
@@ -29,14 +33,22 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
+  const { isLoading, data } = useQuery('repoData', signUpTerms)
+
+  if (isLoading) {
+    return <LoadingScreen />
+  }
+  const serverLayout = {
+    item: data,
+  }
   return (
     <GuestGuard>
       <Page title="Register">
         <RootStyle>
           <Container>
             <ContentStyle>
-              <RegisterForm />
-              <Typography variant="body2" sx={{ mt: 3, textAlign: 'center' }}>
+              <RegisterForm serverLayout={serverLayout} />
+              <Typography variant="body2" sx={{ mtdata: 3, textAlign: 'center' }}>
                 Already have an account?{' '}
                 <NextLink href={PATH_AUTH.login} passHref>
                   <Link variant="subtitle2">Login</Link>
