@@ -7,7 +7,6 @@ import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@m
 
 interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
   name: string
-  value: boolean
 }
 
 export function RHFCheckbox({ name, value, onChange, ...other }: RHFCheckboxProps) {
@@ -19,7 +18,7 @@ export function RHFCheckbox({ name, value, onChange, ...other }: RHFCheckboxProp
           name={name}
           control={control}
           render={({ field }) => {
-            return <Checkbox {...field} checked={value} onChange={onChange} />
+            return <Checkbox {...field} checked={field.value} onChange={onChange} />
           }}
         />
       }

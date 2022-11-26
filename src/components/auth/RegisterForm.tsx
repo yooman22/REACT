@@ -13,6 +13,8 @@ import getValidationSchema from 'src/utils/getValidationSchema'
 
 // types
 import { Terms } from 'src/apis/terms'
+import { boolean } from 'yup/lib/locale'
+import { useEffect, useMemo, useState } from 'react'
 
 // ----------------------------------------------------------------------
 
@@ -22,6 +24,9 @@ type FormValuesProps = {
   confirmPassword: string
   afterSubmit?: string
 }
+type extraFormValuesProps = {
+  [x: string]: string | boolean
+}
 
 interface RegisterFormProps {
   serverLayout: { item: Terms[] | undefined }
@@ -30,34 +35,28 @@ interface RegisterFormProps {
 export default function RegisterForm({ serverLayout }: RegisterFormProps) {
   const { register } = useAuth()
 
-  const customFields = [
-    {
-      name: 'phoneNumber',
-      label: 'phone number',
-      validationType: 'string',
-      required: true,
-      type: 'text',
-      value: '7878787878',
-      values: [],
-      validations: [
-        {
-          type: 'required',
-          params: ['Required'],
-        },
-      ],
-    },
-  ]
-
-  const extraSchema = getValidationSchema(customFields)
-
-  const RegisterSchema = Yup.object().shape({
-    email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
-    password: Yup.string().required('비밀번호를 입력해주세요.'),
-    confirmPassword: Yup.string()
-      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-      .required('비밀번호를 일치시켜 주세요.'),
+  const serverLayoutFields = serverLayout.item?.map((terms) => {
+    return {
+      name: terms.name,
+      label: terms.name,
+      validationType: 'boolean',
+      type: 'boolean',
+      value: terms.checked,
+      validations: [{}],
+    }
   })
-  // .concat(extraSchema)
+
+  const extraSchema = getValidationSchema(serverLayoutFields || [])
+
+  const RegisterSchema = Yup.object()
+    .shape({
+      email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
+      password: Yup.string().required('비밀번호를 입력해주세요.'),
+      confirmPassword: Yup.string()
+        .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+        .required('비밀번호를 일치시켜 주세요.'),
+    })
+    .concat(extraSchema)
 
   const defaultValues = {
     email: '',
@@ -72,6 +71,19 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
 
   const isMountedRef = useIsMountedRef()
 
+  const [terms, setTerms] = useState<Terms[] | undefined>(undefined)
+
+  useMemo(() => {
+    if (!terms) {
+      setTerms(serverLayout.item || [])
+    }
+  }, [])
+
+  const handleChange = (e) => {
+    console.log('sds', terms)
+    setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
+  }
+
   const {
     reset,
     setError,
@@ -81,7 +93,8 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
 
   const onSubmit = async (data: FormValuesProps) => {
     try {
-      await register(data.email, data.password, data.confirmPassword)
+      console.log(data, 'sdasd')
+      //await register(data.email, data.password, data.confirmPassword)
     } catch (error) {
       console.error(error)
 
@@ -104,17 +117,10 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
         <RHFTextField name="confirmPassword" label="확인" type={'password'} />
         <Stack style={{ border: '1px' }}>
           <StrongText title={'약관'} />
-          <RHFCheckbox name="isDefault" label="전체 동의" sx={{ mt: 1 }} value={false} />
+          <RHFCheckbox onChange={handleChange} name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
           {serverLayout.item?.map((term) => (
-            <RHFCheckbox
-              name={term.name}
-              key={term.id}
-              label={term.content}
-              sx={{ mt: 1 }}
-              value={false}
-            />
+            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
           ))}
-          <RHFMultiCheckbox name="isDefault1" options={[]} />
         </Stack>
         <LoadingButton
           fullWidth
