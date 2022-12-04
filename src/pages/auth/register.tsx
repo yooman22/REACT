@@ -33,10 +33,15 @@ const ContentStyle = styled('div')(({ theme }) => ({
 // ----------------------------------------------------------------------
 
 export default function Register() {
-  const { isLoading, data } = useQuery('repoData', signUpTerms)
+  const { isLoading, data, isError } = useQuery('repoData', signUpTerms, {
+    staleTime: Infinity,
+  })
 
   if (isLoading) {
     return <LoadingScreen />
+  }
+  if (isError || data === undefined) {
+    return <p>is Error</p>
   }
   const serverLayout = {
     item: data,

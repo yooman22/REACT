@@ -24,18 +24,22 @@ type FormValuesProps = {
   confirmPassword: string
   afterSubmit?: string
 }
-type extraFormValuesProps = {
-  [x: string]: string | boolean
+type TermsCheckBox = {
+  id: string
+  name: string
+  label: string
+  required: boolean
+  link: string
+  value: boolean
+  checked: boolean
 }
 
 interface RegisterFormProps {
-  serverLayout: { item: Terms[] | undefined }
+  serverLayout: { item: Terms[] }
 }
 
 export default function RegisterForm({ serverLayout }: RegisterFormProps) {
-  const { register } = useAuth()
-
-  const serverLayoutFields = serverLayout.item?.map((terms) => {
+  const serverLayoutFields = serverLayout.item.map((terms) => {
     return {
       name: terms.name,
       label: terms.name,
@@ -46,22 +50,21 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
     }
   })
 
-  const extraSchema = getValidationSchema(serverLayoutFields || [])
+  const extraSchema = getValidationSchema(serverLayoutFields)
 
-  const RegisterSchema = Yup.object()
-    .shape({
-      email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
-      password: Yup.string().required('비밀번호를 입력해주세요.'),
-      confirmPassword: Yup.string()
-        .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
-        .required('비밀번호를 일치시켜 주세요.'),
-    })
-    .concat(extraSchema)
+  const RegisterSchema = Yup.object().shape({
+    email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
+    password: Yup.string().required('비밀번호를 입력해주세요.'),
+    confirmPassword: Yup.string()
+      .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
+      .required('비밀번호를 일치시켜 주세요.'),
+  })
 
   const defaultValues = {
     email: '',
     password: '',
     confirmPassword: '',
+    terms: [],
   }
 
   const methods = useForm<FormValuesProps>({
@@ -71,17 +74,16 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
 
   const isMountedRef = useIsMountedRef()
 
-  const [terms, setTerms] = useState<Terms[] | undefined>(undefined)
-
-  useMemo(() => {
-    if (!terms) {
-      setTerms(serverLayout.item || [])
+  const terms = serverLayout.item.map((item) => {
+    return {
+      ...item,
+      label: item.content,
+      value: item.id,
     }
-  }, [])
+  })
 
   const handleChange = (e) => {
-    console.log('sds', terms)
-    setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
+    //setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
   }
 
   const {
@@ -118,9 +120,7 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
         <Stack style={{ border: '1px' }}>
           <StrongText title={'약관'} />
           <RHFCheckbox onChange={handleChange} name="isDefault" label="전체 동의" sx={{ mt: 1 }} />
-          {serverLayout.item?.map((term) => (
-            <RHFCheckbox name={term.name} key={term.id} label={term.content} sx={{ mt: 1 }} />
-          ))}
+          <RHFMultiCheckbox name={'terms'} options={terms} />
         </Stack>
         <LoadingButton
           fullWidth
