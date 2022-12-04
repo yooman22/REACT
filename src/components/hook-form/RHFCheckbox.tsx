@@ -2,7 +2,9 @@
 import { useFormContext, Controller } from 'react-hook-form'
 // @mui
 import { Checkbox, FormControlLabel, FormGroup, FormControlLabelProps } from '@mui/material'
-
+import { Fragment } from 'react'
+// styles
+import sFrom from 'src/styles/Form.module.scss'
 // ----------------------------------------------------------------------
 
 interface RHFCheckboxProps extends Omit<FormControlLabelProps, 'control'> {
@@ -46,7 +48,7 @@ export function RHFMultiCheckbox({ name, options, ...other }: RHFMultiCheckboxPr
     <Controller
       name={name}
       control={control}
-      render={({ field }) => {
+      render={({ field, fieldState: { error } }) => {
         const onSelected = (option: string) =>
           field.value.includes(option)
             ? field.value.filter((value: string) => value !== option)
@@ -54,17 +56,25 @@ export function RHFMultiCheckbox({ name, options, ...other }: RHFMultiCheckboxPr
         return (
           <FormGroup>
             {options.map((option) => (
-              <FormControlLabel
-                key={option.value}
-                control={
-                  <Checkbox
-                    checked={field.value.includes(option.value)}
-                    onChange={() => field.onChange(onSelected(option.value))}
-                  />
-                }
-                label={option.label}
-                {...other}
-              />
+              <Fragment key={option.id}>
+                <FormControlLabel
+                  control={
+                    <>
+                      <Checkbox
+                        checked={field.value.includes(option.value)}
+                        onChange={() => field.onChange(onSelected(option.value))}
+                      />
+                    </>
+                  }
+                  label={option.label}
+                  {...other}
+                />
+                {option.required && error?.message && (
+                  <p className={`${sFrom.muiFormHelperText_root} ${sFrom.mui_error}`}>
+                    {error?.message}
+                  </p>
+                )}
+              </Fragment>
             ))}
           </FormGroup>
         )

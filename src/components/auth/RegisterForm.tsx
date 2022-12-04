@@ -39,18 +39,13 @@ interface RegisterFormProps {
 }
 
 export default function RegisterForm({ serverLayout }: RegisterFormProps) {
-  const serverLayoutFields = serverLayout.item.map((terms) => {
+  const terms = serverLayout.item.map((item) => {
     return {
-      name: terms.name,
-      label: terms.name,
-      validationType: 'boolean',
-      type: 'boolean',
-      value: terms.checked,
-      validations: [{}],
+      ...item,
+      label: item.content,
+      value: item.id,
     }
   })
-
-  const extraSchema = getValidationSchema(serverLayoutFields)
 
   const RegisterSchema = Yup.object().shape({
     email: Yup.string().email('이메일 형식을 확인해주세요.').required('Email 입력이 필요합니다.'),
@@ -58,6 +53,25 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
     confirmPassword: Yup.string()
       .oneOf([Yup.ref('password'), null], '비밀번호가 일치하지 않습니다.')
       .required('비밀번호를 일치시켜 주세요.'),
+    terms: Yup.array().test(
+      'terms',
+      () => {
+        return '필수 약관을 동의해주세요'
+      },
+      (checkedTerms) => {
+        const requiredCheckList = terms.reduce((acc: string[], term) => {
+          if (term.required) {
+            acc.push(term.id)
+          }
+          return acc
+        }, [])
+
+        return (
+          requiredCheckList.filter((el) => new Set(checkedTerms).has(el)).length ===
+          requiredCheckList.length
+        )
+      }
+    ),
   })
 
   const defaultValues = {
@@ -73,14 +87,6 @@ export default function RegisterForm({ serverLayout }: RegisterFormProps) {
   })
 
   const isMountedRef = useIsMountedRef()
-
-  const terms = serverLayout.item.map((item) => {
-    return {
-      ...item,
-      label: item.content,
-      value: item.id,
-    }
-  })
 
   const handleChange = (e) => {
     //setTerms(terms?.map((term) => ({ ...term, checked: !term.checked })))
